@@ -1,2 +1,5 @@
-This is the official repo for TKUAIIC Discord bot.
+# TKUAIIC Discord bot
+
+This is the official repository for TKUAIIC Discord bot.
+
 Currently working in progress...
