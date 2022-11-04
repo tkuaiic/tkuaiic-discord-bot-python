@@ -1,10 +1,9 @@
 import interactions, os
-from interactions import Client, SelectMenu, SelectOption
-import firebase_admin, json
+import firebase_admin
 from firebase_admin import credentials, firestore
 
 # These are basic inits for discord bot to function corrrectly
-bot = Client(
+bot = interactions.Client(
     token = os.getenv("DISCORD_TOKEN"),
     default_scope = os.getenv("DISCORD_SCOPE"),
 )
@@ -20,9 +19,7 @@ def check_df(collection, name):
 name = interactions.TextInput(
     style=interactions.TextStyleType.SHORT,
     label="姓名：",
-    custom_id="name_input",
-    min_length=1,
-    max_length=3,
+    custom_id="name_input"
 )
 studentid = interactions.TextInput(
     style=interactions.TextStyleType.SHORT,
@@ -60,8 +57,18 @@ async def modal_response(ctx, name: str, studentid: int):
         # Add role to user
         await ctx.author.add_role(roles.id)
         # Confirm
-        await ctx.send(f"{name}您好，已將您加入社員身分組！", ephemeral=True)
+        await ctx.channel.send(f"{name}您好，已將您加入`第2屆社員 2nd Gen. Club Member`身分組！", ephemeral=True)
     else:
+        # In case cadre needs to add member role
+        doc_ref = check_df(u"1111-cadre", name)
+        entry = doc_ref.get()
+        if entry.exists and entry.to_dict()['student_id'] == studentid:
+            # Add the user's discord account name into the database
+            doc_ref.update({
+                u'discord_account': f'{ctx.author.username}#{ctx.author.discriminator}'
+            })
+            await ctx.send(f"已將您的Discord帳號登入至資料庫，謝謝！", ephemeral=True)
+            return
         await ctx.send(f"驗證有誤，請確認姓名及學號是否正確。如有疑問，請透過<#1024724411074498591>頻道反應問題，謝謝！", ephemeral=True)
 
 bot.start()
