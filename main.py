@@ -15,8 +15,7 @@ db = firestore.client()
 #------------------------Helper Functions------------------------
 def check_df(collection, name):
     doc_ref = db.collection(collection).document(name)
-    doc = doc_ref.get()
-    return doc
+    return doc_ref
 #----------------------Main Code Starts Here----------------------
 name = interactions.TextInput(
     style=interactions.TextStyleType.SHORT,
@@ -48,10 +47,19 @@ async def verify(ctx):
 
 @bot.modal("verify_modal")
 async def modal_response(ctx, name: str, studentid: int):
-    entry = check_df(u"1111-member", name)
+    doc_ref = check_df(u"1111-member", name)
+    entry = doc_ref.get()
+    # Authentication logic(check if name and student ID matches the record in database)
     if entry.exists and entry.to_dict()['student_id'] == studentid:
+        # Add the user's discord account name into the database
+        doc_ref.update({
+            u'discord_account': f'{ctx.author.username}#{ctx.author.discriminator}'
+        })
+        # Gets role ID
         roles, = interactions.search_iterable(ctx.guild.roles, name='第2屆社員 2nd Gen. Club Member')
+        # Add role to user
         await ctx.author.add_role(roles.id)
+        # Confirm
         await ctx.send(f"{name}您好，已將您加入社員身分組！", ephemeral=True)
     else:
         await ctx.send(f"驗證有誤，請確認姓名及學號是否正確。如有疑問，請透過<#1024724411074498591>頻道反應問題，謝謝！", ephemeral=True)
