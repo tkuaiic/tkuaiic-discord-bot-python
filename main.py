@@ -77,9 +77,9 @@ async def modal_response(ctx, name: str, studentid: int):
             doc_ref.update({
                 u'discord_account': f'{ctx.author.username}#{ctx.author.discriminator}'
             })
-            await ctx.send(f"已將您的Discord帳號登入至資料庫，謝謝！", ephemeral=True)
+            await ctx.send(f"已將您的Discord帳號登錄至資料庫，謝謝！", ephemeral=True)
             logging.info(" - Successfully Update Discord Account for {name}")
             return
-        await ctx.send(f"驗證有誤，請確認姓名及學號是否正確。如有疑問，請透過<#1024724411074498591>頻道反應問題，謝謝！", ephemeral=True)
+        await ctx.send(f"驗證有誤，請確認姓名及學號是否正確。如有疑問，請透過 <#1024724411074498591> 頻道回報問題，謝謝！", ephemeral=True)
 
 bot.start()
